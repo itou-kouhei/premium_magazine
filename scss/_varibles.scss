@@ -1,0 +1,9 @@
+// 変数化
+:root {
+  // Radio Canadaのように半角スペースが入ってるフォントは””や''のクォーテンションマークで囲む。このルールは昔のルール。現在は””で囲む必要はない。念の為。
+    --font-primary: "Radio Canada", "Noto Sans JP", sans-serif;
+    --color-primary: #000;
+    --easing: cubic-bezier(.69,0,.18,1); //アニメーションの動き
+  }
+
+  

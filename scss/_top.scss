@@ -1,0 +1,494 @@
+@use "./mixins" as *;
+
+// モバイルファーストで作成
+
+// リセット
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// 共通設定　ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+
+// 画像の共通設定
+img {
+  //ベースラインに対する余白が発生しないようにする。ベースラインの関係はinlineやinline-blockの要素に対して有効であるため、「display: block;」を設定することでも解決することができます。
+  display: block;
+  //画面の拡大縮小によって画面のサイズが拡大縮小したときに、画面のサイズに合わして画像もサイズを拡大縮小する。画像のサイズはその場で指定されているサイズを表示する。指定されてなければ元のサイズ。
+  max-width: 100%;
+}
+
+// bodyの共通設定　(body内にはテキスト関連を作っておくと良い。)
+body {
+  font-family: var(--font-primary); //用意したGoogleフォントの適用
+  padding-top: 60px; //全体にpadding-top: 60px;の指定をしているが、目的はメインビジュアルが１番上の固定されているheaderと被らないようにメインビジュアルのスタート位置を60px下げておく指定。これによりスクロールする前のfixedで固定されているheaderと下にあるメインビジュアルが被らず綺麗に並ぶ。
+
+  @include mq {
+    padding-top: 0; //上のSPのときの指定をPCの時はいらないので消す。
+  }
+}
+
+// htmlの共通設定　(全体的にフォントのサイズを少し下げておく)
+html {
+  font-size: 14px;
+  // remの単位影響がある。14pxと設定したので14px × 数値　ということになる。
+}
+// リストの共通設定　(今回のデザインでリストを多く使って構成しているので、リストの箇条書きの点を消しておく。)
+ul,
+ol {
+  list-style: none; //リストの箇条書きの点を消す。今回のデザインでリストを多く使って構成しているので、リストの箇条書きの点を消しておく。
+}
+
+
+
+
+
+// ヘッダー ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+//大枠の箱の指定。中にロゴ、ボタン、ナビゲーション、が子要素で３つ兄弟要素で入っている。
+.site-header {
+  position: fixed; //スクロールに反応しないように画面固定
+  left: 0; //その親要素の左端からの位置を指定。これにより、要素が画面の左上隅に固定される効果を得ることができます。
+  top: 0; //その親要素の上端からの位置を指定。これにより、要素が画面の左上隅に固定される効果を得ることができます。
+  z-index: 1; //要素の重なる順番の指定。今回の場合はナビゲーショが子要素なのでおのずと１番上に重なるので指定しなくても良いが念の為。
+  background: #fff; //headerの白背景の指定
+  width: 100%; //position: fixed;で幅が内容に限定されているので、これで幅をウィンドウ幅にする。
+  height: 60px; //高さの指定
+  display: flex; //中のロゴを中央配置にしたいため。
+  justify-content: center; //水平中央(中のロゴを中央配置させるため。)
+  align-items: center; //垂直中央(中のロゴを中央配置させるため。)
+
+  // ロゴ
+  &__logo {
+    img {
+      width: 140px; //ロゴのサイズの指定
+    }
+  }
+
+  // ナビゲーション(２つある内の１つのクラス。SPの時のボタンを押した時に表示されるナビゲーションの指定)
+  &__nav-container {
+    position: fixed; //画面固定
+    width: 100%; //幅をウィンドウ幅(ウィンドウの全体に表示させるため。)
+    height: 100%; //高さもウィンドウの高さで(ウィンドウの全体に表示させるため。)
+    top: 0; //要素の位置を指定(親要素の左上隅に配置してかつfixedで固定される)
+    left: 0; //要素の位置を指定(親要素の左上隅に配置してかつfixedで固定される)
+  }
+
+  // PC ======
+  @include mq {
+    width: 200px; //ウィンドウの幅を小さくしてもヘッダーの幅が変わらないように固定値で設定する
+    height: 100vh; //高さの指定。100%でも可
+    flex-direction: column; //縦並び
+
+    // ロゴ
+    &__logo {
+      margin: 40px 0 80px;
+
+      img {
+        width: 160px; //SPの時のサイズをwidth: 140px;にしているのでPC用に大きくする
+      }
+    }
+  }
+} //.site-header
+
+
+
+
+
+
+// ナビゲーションコンテナ (2つ目のクラス。中にナビゲーションの項目とSNSの項目がある) ーーーーーーーーーーーーーーーーーーーーーーーーー
+// 細かい指定する用に用意していたもう1つのクラス。
+.site-nav-container {
+  background-color: #fff; //背景色
+  display: flex; //中のレイアウトを整えるため。
+  flex-direction: column; //flexで横並びになった中の子要素達を縦並びにする。
+  justify-content: center; //flex-direction: columnを使うと意味が逆で垂直中央
+  align-items: center; //flex-direction: columnを使うと意味が逆で水平中央
+  transform: translateX(
+    100%
+  ); //ナビゲーションコンテナを画面外に押し出して隠す。
+  transition: 0.8s var(--easing); //ナビゲーションコンテナが開いたときのアニメーションの指定。0.8秒で変数化したアニメーションの動き
+
+  // ナビゲーションコンテナが開く設定
+  // ナビゲーションコンテナにチェックが入ったときの自身(ナビゲーションコンテナ)
+  .site-nav-checkbox:checked ~ & {
+    transform: translateX(0); //画面外に隠れていたのを戻す
+  }
+
+  //ナビゲーションの項目
+  &__nav {
+    text-align: center; //テキストを中央揃え
+    flex-grow: 2; //親のflexの中で高さを持たせるようにする。SNSの方にはflex-grow: 1; と設定してある
+    display: flex; //ナビゲーションの項目もレイアウトする必要があるためここにもflexをする。
+    align-items: center; //垂直中央
+
+    li {
+      margin-bottom: 2em; //項目の下に2em(２文字文)の余白を作って項目同士の間隔を作る。
+
+      //最後の項目
+      &:last-child {
+        margin-bottom: 0; //最後の項目の下余白は消しておく。
+      }
+    }
+
+    a {
+      color: var(--color-primary); //文字の色
+      text-decoration: none; //下線を消す
+      font-size: 1.2rem; // 14px x 1.2
+      text-transform: uppercase; //小文字から大文字に変える。
+    }
+  }
+
+  // SNSの項目
+  &__sns {
+    display: flex; //横並びに
+    flex-grow: 1; // SNSにも親のflexの中で高さを持たせるようにする。
+
+    a {
+      margin: 0 8px; //タップしやすいようにSNS同士の余白をつくる。
+    }
+  }
+
+  // PC ============================================================================
+  @include mq {
+    //ナビゲーションの２つある内のもう１つのクラスにSPのときのposition: fixed; で画面固定をしているので、その影響をこっちのクラスでも受けるので、初期値に戻して解除する。
+    position: static;
+    //これは、こっちのクラスにSPのときにtransform: translateX(100%);でナビゲーションコンテナを画面外に押し出して隠すという指定がされいて、その影響でヘッダーのPCの設定の方で決めた固定値200pxの幅からはみ出ているので戻す。かつ念の為!importantで優先度をあげてw絶対にtranslateXは0にする。
+    transform: translateX(0) !important;
+    //PCではナビゲーションの項目を左寄せにしたいので、ナビゲーションの項目では .`site-nav-container`の大枠からその子要素もレイアウトのために`flex`が何重にもかかっているので親要素から考えていかないといけない。で見て行くと親の大枠のとでSPのときに`flex`で`center`にしているので左寄せにする。
+    // そのときに、現状`.site-nav-container`の大枠で `flex-direction: column;` もしているので`align-items`の軸が水平になっていることも常に考えておく必要がある。
+    align-items: flex-start;
+    //そしてナビゲーションの項目をロゴの下の余白80pxに合わせるように移動させたいので、ここも.site-nav-containerの大枠で flex-direction: column; にしているのでjustify-content: の軸が垂直になっているのでその上で flex-start となる。
+    //でさらに子要素のナビゲーションの項目の＆＿navでもalign-items: center;にしているので、＆＿navに対してもjustify-content: flex-start;を追記しないと実現できない。
+    justify-content: flex-start;
+
+    //ナビゲーション
+    &__nav {
+      align-items: flex-start; //ナビゲーションの項目を上に合わせるように移動
+      text-align: start; //項目の文字の位置を枠の左に詰める。start は言語によってスタート位置は変わる。日本語は左から読むので認識して左になる。
+      padding: 0 15px; //上の指定でピッタリ左にくっ付いているので、左右に余白をつけて見た目をよくする。
+
+      li {
+        margin-bottom: 1.5em; //余白の指定で項目間を少し縮める。文字サイズ14px × 1.5
+      }
+
+      a {
+        font-size: 1rem; //14pxに戻す。remにすると元々設定したフォントサイズが使えるので、14px × 1　で14px
+        position: relative; //項目にホバーした時の動く下線の配置の際に基準になっておく。
+        display: inline-block; //項目の下に動く下線のための余白をちゃんと付けれるように。
+        padding-bottom: 3px; //項目の文字と下線の間の余白
+
+        //項目にホバーした時の左に抜けて行く下線の作成。動きのついた下線は擬似要素でしか実現できないので擬似要素で作成。
+        &::after {
+          content: ""; //afterを使ったときの実行コード
+          height: 1px; //高さのサイズ
+          width: 100%; //relativeで基準になった親の要素と同じ幅のサイズ。基準になったのは項目の文字なので文字と同じのサイズの下線が出来上がる。
+          position: absolute;
+          background-color: var(--color-primary); //色は黒
+          //ここまでの上の指定で線が文字の右横に出来ているので文字の下に位置を指定。
+          left: 0; //左0で文字の右にいたので一度重なる。
+          bottom: 0; //下0 これで下線位置にいく。
+          transform: scaleX(0); //ホバーしたときのアニメーション用に通常の状態の設定。横幅をで0(比率)に指定おく。これで一旦作成した下線が無くなる。あとはホバーしたときにアニメーションの設定で表示させるようにする。
+          transition: transform 0.4s var(--easing); //アニメーションの設定。0.4秒で挙動。これでアニメーションするようになったが、中心に向かって消えるので、これを右に向かって消えるようにする。
+          transform-origin: right center; //基準点を左の真ん中にすることで、アニメーションが右に向かって消えるようになる。
+        }
+
+        //項目::after(下線)の擬似要素にホバーした時の左に抜けて行く下線の動きの作成
+        &:hover::after {
+          transform: scaleX(1); //これで下線の幅が戻る。
+          transform-origin: left center;
+        }
+      }
+    }
+
+    // SNS
+    &__sns {
+      //大枠の親でjustify-content: flex-start;をかかっているためその影響で左端に寄っているので中央にするための指定。
+      //flexを受ける子要素のサイズは画像のサイズやテキストの量である内容によって幅が決まるので、ここでは意図的にSNSにPCのときは幅100%にすることで枠内でいっぱいに広がる。幅100%にすると位置調整が出来るようになるのでjustify-content: center;で中央になる。
+      width: 100%; 
+      justify-content: center; //中央配置
+      align-items: flex-end; //下に配置
+      padding-bottom: 30px; //下にくっつき過ぎているので余白入れて完成。
+    }
+  }
+} //.site-nav-container
+
+
+
+
+
+
+
+// ハンバーガーボタン(labelタグ)　ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+.site-nav-toggle {
+  position: fixed; //画面固定
+  // labelタグはインライン要素だか、fixed や abusolute を使うと自動でブロックレベル要素に変換されるの下の幅、高さが指定できる。
+  width: 40px; //ボタンの幅のサイズ
+  height: 40px; //ボタンの高さのサイズ
+  z-index: 1; //これはHTMLの書き順で、下のナビゲーションにもflexをかけているため。後ろに隠れないようにする。
+  top: 10px; //上からの位置に移動
+  right: 10px; //右からの位置に移動
+  display: flex; //ハンバーガーメニューの上下の線を真ん中にするため。
+  justify-content: center;
+  align-items: center;
+
+  // ハンバーガーメニューの線の作成
+  &::before,
+  &::after,
+  span {
+    content: ""; // &::before,&::after,を使うときはセットで必ずかく。じゃ無いと実装されない。
+    height: 1px;
+    width: 30px;
+    background-color: var(--color-primary);
+    //spanはインライン要素なので、absoluteをかけると一度３本線が重なってかつ、absolute や flexをかけた要素はブロックに自動で変わるので、上でかけた幅、高さの指定がいく。
+    position: absolute;
+    // 今回はサイトの全体で同じ動きを使うので変数化してある。ナビゲーションの開閉や３本線のボタンのところなど。
+    transition: 0.4s var(--easing); //0.4秒で変数化しておいたアニメーションの動き。
+  }
+
+  //真ん中の線の左に縮んで消えるアニメーションにしたいので、spanの基準点を左にする指定。
+  span {
+    transform-origin: left center; //デフォルトでは中心は基準点(: center center;)なので左にする。ここは数値も入れれる。
+  }
+
+  //上の線をずらす
+  &::before {
+    top: calc(
+      50% - 8px
+    ); //50%で改めて真ん中にして、そこから- 8pxで少し上にズレる。
+  }
+  //下の線をずらす。
+  &::after {
+    top: calc(
+      50% + 8px
+    ); //50%で改めて真ん中にして、そこから+ 8pxで少し下にズレる。
+  }
+
+  // チェックボックスにチェックが入ったときの状態の作成
+  // .site-nav-checkbox(inputのチェックボックス):checked(にチェックが入った状態) ~(兄弟にあたる) &(labelタグ)という意味
+  .site-nav-checkbox:checked ~ & {
+    // 真ん中の線
+    span {
+      transform: scaleX(0); //Xで横に縮む
+    }
+    //上の線
+    &::before {
+      top: 50%; //チェックが入ったときにまず真ん中に戻して
+      transform: rotate(45deg); //45度回転をかけて X を作る
+    }
+    //下の線
+    &::after {
+      top: 50%; //チェックが入ったときにまず真ん中に戻して
+      transform: rotate(-45deg); //-45度回転をかけて X を作る
+    }
+  }
+
+  // PC =====
+  // PCときはボタンを消す設定をする
+  @include mq {
+    display: none; //ボタンを消しておく
+  }
+} //.site-nav-toggle
+
+// inputタグ
+.site-nav-checkbox {
+  display: none; //隠す
+}
+
+
+
+
+
+
+
+// メイン　ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+main {
+  @include mq {
+    margin-left: 200px;
+  }
+}
+
+// メインビジュアル -----------------------------------------------------------------
+.main-visual {
+  background: url(../img/mv-bg@2x.jpg) no-repeat; //背景画像の指定
+  background-size: cover; //画像の元のサイズがデカいので収縮させる。coverだと余白は出来ないので適している。
+  display: flex; //表紙の画像は中央に配置されているのでそれを作るために
+  justify-content: center; //中央
+  align-items: center; //中央
+  position: relative; //ここでflexの位置の指定をしているのでテキストも同じ影響を受けるので、　abusoluteで配置して行くための準備
+  height: calc(100vh - 60px); //前に`body{}`に余白60pxとつけたのでその分calc関数で引く。100vhとやると画面の高さにはなるがヘッダーの部分を含めてないのでヘッダーの高さは差し引く必要がある。
+
+  // タイトル
+  &__title {
+    position: absolute; //テキストの配置を自由にする
+    left: 5%; //５pxとするよりかは相対値で指定する。そうすると相対値なので画面のサイズによってなので、左からの5%;の余白が画面のサイズによって連動して5%;の位置を保つ。
+    bottom: 5%; //下からの距離も同じ。相対値なので画面のサイズによってなので、下からの5%;の余白が画面のサイズによって連動して5%;の位置を保つ。
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    // .クラス名 > span
+    > span {
+      // display: inline-block;
+      background-color: #fff; 
+      margin-bottom: 8px; //下のタイトルとの余白
+      padding: 0 5px; //背景の白枠内のテキストの周りの余白
+      font-feature-settings: "palt" 1; //文字詰め
+      font-weight: 400; //文字の太さの指定。400は標準の太さ。
+      animation: mv-title 1s both var(--easing);
+      transform-origin: left center;
+      overflow: hidden;
+    }
+
+    > span span {
+      animation: mv-title-inside 1s 1s both var(--easing);
+      display: block;
+    }
+
+    > span:first-of-type {
+      font-size: 1.2rem; //こういうときはremがよい。emだと親要素のことを気にしなくちゃいけなくなるので、remだとhtml{}で決めた14px × 1.2になる。
+    }
+    > span:nth-of-type(2),
+    > span:nth-of-type(3) {
+      font-size: 2rem;
+    }
+  }
+
+  @keyframes mv-title {
+    0% {
+      transform: scaleX(0);
+    }
+    100% {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes mv-title-inside {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  // 雑誌の表示の画像
+  &__cover {
+    width: min(80%, 400px); //雑誌の表紙のサイズの指定。PCの画面サイズまでのSP、タブレット、のどの画面サイズで綺麗に表示させる。
+    filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.15));
+  }
+
+  // PC =====
+  @include mq {
+    height: 100vh;
+
+    // 雑誌の表示の画像
+    &__cover {
+      height: 80vh;
+      width: auto;
+    }
+  }
+} //.main-visual
+
+
+
+
+
+
+// バックナンバー ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+// sectionタグ
+.backnumbers {
+  // h2タグ(見出し)
+  &__title {
+    font-size: 0.8rem; //このタイトルの全体の指定では２行目の文字が小さいので、文字を小さくしておく
+    font-weight: 400; //太さは標準
+    padding: 20px; //タイトルの上下の余白と右端の余白のため。これ以降でも意識して同じ余白を指定しるとテキストに対しての左右の余白揃って綺麗に見える。
+    background-color: #f8f8f8; //背景に薄いグレー
+
+    &::first-line {
+      //emだと親要素のことを気にしなくちゃいけなくなるからremの方がよい。emだと親のタイトルの全体設定で font-size: 0.8rem; としているので、14 × 0.8 のサイズに対して 1.5em となる。
+      // つまり14 × 0.8rem × 1.5em となって計算が面倒になる。
+      // なのでここでも rem にすることで 14  × 1.5 となる。
+      // このときにSPの画面でも見て大きさをチェックして決める。
+      font-size: 1.5rem; 
+      text-transform: uppercase; //大文字にする
+    }
+  }
+
+  // バックナンバーリスト
+  &__list {
+    display: flex; //レイアウトのため
+    flex-wrap: wrap; //改行で縦並びにする。
+  }
+} //.backnumbers
+
+
+// バックナンバーアイテム ------------------------------------------------------------------------------
+// liタグ (親のsectionタグの.backnumbers {}の中に書いてもいいが見ずらいので独立して書いてる。)
+.backnumber-item {
+  width: 100%; //SPは縦並びにするので、幅は100%にする。flex-basis: 100%; これでも同じ
+  padding: 40px 20px;
+
+  a {
+    text-decoration: none; //下線を消す。liの中でimgとpをaタグで挟んでいることで、その領域全体がaタグになっているので、テキストに下線などが付いてしまっているので、制御していく。
+    color: var(--color-primary); //文字の色を黒にする。
+  }
+
+  //画像
+  &__cover {
+    max-width: 300px; //width: 100%;にしてるのでスマホの画面サイズが小さいと画像がデカ過ぎてはみ出るので、300px以上大きくならいようにする。スマホの最も小さい昔のiphon5とかの画面幅が320pxなので、それより少し下げた300pxぐらいにする。
+    width: 65%; //親要素に対して65%のサイズ。そして上の指定で300px以上は多くならない。
+    margin: 0 auto; //画像を中央配置。これは画像がdisplay: block;になっているので、左右に余白をつけて中央にしている。
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 0, 0, 0.15); //陰
+  }
+
+  // タイトル　pタグ
+  &__meta {
+    margin-top: 40px; //表紙との隙間を作る。表紙の下にmarginを設定して作っても良い。
+
+    // pタグの中のspan
+    span {
+      display: block; //改行させるため
+    }
+
+    // pタグの中の最初と２番目のspan
+    span:first-of-type,
+    span:nth-of-type(2) {
+      font-weight: 300; //見本を見るとフォントのウェイトが細いので、今回使っている英文フォントの最低値の300に合わせる。
+      margin-bottom: 8px; //お互いの間を空ける
+    }
+    // pタグの中の３番目のspan
+    span:nth-of-type(3) {
+      font-size: 1.4rem; //文字を少し大きくする
+    }
+  }
+
+  // PC =====
+  @include mq {
+    width: 50%; //親にflexをかけてレイアウトしているので、SPのときは中の幅を１００％で縦並びにして、PCのときは中の幅を50%;にすると２カラムになる。これで768pxのとき２カラムになる。
+    // flex-basis: 50%; これでも同じで２カラムになる。
+  }
+} //.backnumber-item
+
+
+// コンテンツの背景指定 ---------------------------------------------------------------------------------
+.backnumber {
+  &-101 {
+    background-color: #ecf4f9;
+  }
+  &-100 {
+    background-color: #fbf3d2;
+  }
+  &-99 {
+    background-color: #f9f2eb;
+  }
+  &-98 {
+    background-color: #fae8c2;
+  }
+  &-97 {
+    background-color: #e2efe7;
+  }
+  &-96 {
+    background-color: #f2f5fb;
+  }
+}
