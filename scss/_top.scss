@@ -323,9 +323,9 @@ main {
     position: absolute; //テキストの配置を自由にする
     left: 5%; //５pxとするよりかは相対値で指定する。そうすると相対値なので画面のサイズによってなので、左からの5%;の余白が画面のサイズによって連動して5%;の位置を保つ。
     bottom: 5%; //下からの距離も同じ。相対値なので画面のサイズによってなので、下からの5%;の余白が画面のサイズによって連動して5%;の位置を保つ。
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    display: flex; //アニメーション用に
+    flex-direction: column; //アニメーション用にspanで囲っていてタイトルが横並びになっているので縦並びにする。
+    align-items: flex-start; //
 
     // .クラス名 > span
     > span {
@@ -335,14 +335,14 @@ main {
       padding: 0 5px; //背景の白枠内のテキストの周りの余白
       font-feature-settings: "palt" 1; //文字詰め
       font-weight: 400; //文字の太さの指定。400は標準の太さ。
-      animation: mv-title 1s both var(--easing);
-      transform-origin: left center;
-      overflow: hidden;
+      animation: mv-title 1s both var(--easing); //帯のアニメーション
+      transform-origin: left center; //帯のtransformの基準点を左にする
+      overflow: hidden; //テキストの下にずらして上がってくるアニメーションの下にズレている時を隠す。
     }
 
     > span span {
-      animation: mv-title-inside 1s 1s both var(--easing);
-      display: block;
+      animation: mv-title-inside 1s 1s both var(--easing); //テキストのアニメーション
+      display: block; //一番奥にいるspanでflexの影響を受けないので、インラインのままで、transformはインラインには効かないので、効くようにブロックに変える。
     }
 
     > span:first-of-type {
@@ -354,6 +354,7 @@ main {
     }
   }
 
+  // 帯の方のアニメーションの仕組み(タイムライン)の作成
   @keyframes mv-title {
     0% {
       transform: scaleX(0);
@@ -362,7 +363,7 @@ main {
       transform: scaleX(1);
     }
   }
-
+// テキストの方のアニメーションの仕組み(タイムライン)の作成
   @keyframes mv-title-inside {
     0% {
       transform: translateY(100%);
@@ -471,7 +472,7 @@ main {
 } //.backnumber-item
 
 
-// コンテンツの背景指定 ---------------------------------------------------------------------------------
+// コンテンツの背景色の指定 ---------------------------------------------------------------------------------
 .backnumber {
   &-101 {
     background-color: #ecf4f9;
